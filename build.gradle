@@ -1,0 +1,55 @@
+buildscript {
+    ext {
+        springBootVersion = '2.0.0.M4'
+    }
+    repositories {
+        jcenter()
+        maven { url "https://repo.spring.io/milestone" }
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.2.1'
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+group 'com.example'
+version '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url "https://repo.spring.io/milestone" }
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter'
+}
+
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+
+task dockerfile(type: Dockerfile) {
+    from 'java:openjdk-8-jre-alpine'
+    addFile "${bootJar.archiveName}", '.'
+    entryPoint 'java', '-jar', "${bootJar.archiveName}"
+}
+
+task copyJar(type: Copy) {
+    dependsOn bootJar
+    from bootJar.archivePath
+    into dockerfile.destFile.parentFile
+}
+
+task buildImage(type: DockerBuildImage) {
+    dependsOn dockerfile, copyJar, check
+    inputDir dockerfile.destFile.parentFile
+    tags = [
+            'spring-boot-app:' + version,
+            'spring-boot-app:latest',
+    ]
+}
