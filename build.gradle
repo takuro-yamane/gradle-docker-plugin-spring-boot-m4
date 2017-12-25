@@ -24,12 +24,16 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url "https://repo.spring.io/milestone" }
-    maven { url "http://repo.jenkins-ci.org/public" }
+
+    // docker-java SNAPSHOT repo
+    // https://github.com/docker-java/docker-java#latest-development-version
+    maven { url 'https://oss.sonatype.org/content/groups/public' }
 }
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter'
-    dockerJava 'com.nirima:docker-java-shaded:0.16.2'
+    // update docker-java version 3.0.14 to 3.1.0-SNAPSHOT
+    dockerJava 'com.github.docker-java:docker-java:3.1.0-SNAPSHOT'
     dockerJava 'org.slf4j:slf4j-simple:1.7.5'
     dockerJava 'cglib:cglib:3.2.0'
 }
