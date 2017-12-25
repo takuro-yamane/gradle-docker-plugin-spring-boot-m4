@@ -1,0 +1,1 @@
+# gradle-docker-plugin-spring-boot-m4
