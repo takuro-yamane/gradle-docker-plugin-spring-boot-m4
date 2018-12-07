@@ -1,13 +1,13 @@
 buildscript {
     ext {
-        springBootVersion = '2.0.0.M4'
+        springBootVersion = '2.1.0.RELEASE'
     }
     repositories {
         jcenter()
         maven { url "https://repo.spring.io/milestone" }
     }
     dependencies {
-        classpath 'com.bmuschko:gradle-docker-plugin:3.2.1'
+        classpath 'com.bmuschko:gradle-docker-plugin:3.6.2'
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
@@ -33,9 +33,9 @@ repositories {
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter'
     // update docker-java version 3.0.14 to 3.1.0-SNAPSHOT
-    dockerJava 'com.github.docker-java:docker-java:3.1.0-SNAPSHOT'
-    dockerJava 'org.slf4j:slf4j-simple:1.7.5'
-    dockerJava 'cglib:cglib:3.2.0'
+    dockerJava 'com.github.docker-java:docker-java:3.1.0-rc-7'
+    dockerJava 'org.slf4j:slf4j-simple:1.7.25'
+    dockerJava 'cglib:cglib:3.2.9'
 }
 
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
