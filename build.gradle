@@ -1,13 +1,14 @@
 buildscript {
     ext {
-        springBootVersion = '2.0.0.M4'
+        springBootVersion = '2.1.0.RELEASE'
     }
     repositories {
         jcenter()
-        maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://plugins.gradle.org/m2/" }
+
     }
     dependencies {
-        classpath 'com.bmuschko:gradle-docker-plugin:3.2.1'
+        classpath 'com.bmuschko:gradle-docker-plugin:3.6.2' // 4.1.0
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
@@ -23,19 +24,14 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    maven { url "https://repo.spring.io/milestone" }
-
-    // docker-java SNAPSHOT repo
-    // https://github.com/docker-java/docker-java#latest-development-version
-    maven { url 'https://oss.sonatype.org/content/groups/public' }
+    maven { url "http://repo.spring.io/plugins-release" }
 }
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter'
-    // update docker-java version 3.0.14 to 3.1.0-SNAPSHOT
-    dockerJava 'com.github.docker-java:docker-java:3.1.0-SNAPSHOT'
-    dockerJava 'org.slf4j:slf4j-simple:1.7.5'
-    dockerJava 'cglib:cglib:3.2.0'
+
+    dockerJava 'com.aries:docker-java-shaded:3.1.0-rc-5:cglib@jar'
+    dockerJava 'org.slf4j:slf4j-simple:1.7.25'
 }
 
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
@@ -43,6 +39,7 @@ import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 
 task dockerfile(type: Dockerfile) {
     from 'java:openjdk-8-jre-alpine'
+    destFile = project.file("${buildDir}/docker_build/Dockerfile")
     addFile "${bootJar.archiveName}", '.'
     entryPoint 'java', '-jar', "${bootJar.archiveName}"
 }
@@ -50,12 +47,13 @@ task dockerfile(type: Dockerfile) {
 task copyJar(type: Copy) {
     dependsOn bootJar
     from bootJar.archivePath
-    into dockerfile.destFile.parentFile
+    into project.file("${buildDir}/docker_build")
 }
 
 task buildImage(type: DockerBuildImage) {
     dependsOn dockerfile, copyJar, check
-    inputDir dockerfile.destFile.parentFile
+    inputDir = project.file("${buildDir}/docker_build")
+
     tags = [
             'spring-boot-app:' + version,
             'spring-boot-app:latest',
