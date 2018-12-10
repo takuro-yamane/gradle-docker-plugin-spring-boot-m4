@@ -28,12 +28,13 @@ repositories {
     // docker-java SNAPSHOT repo
     // https://github.com/docker-java/docker-java#latest-development-version
     maven { url 'https://oss.sonatype.org/content/groups/public' }
+    maven { url 'https://repo.spring.io/plugins-release/' }
 }
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter'
     // update docker-java version 3.0.14 to 3.1.0-SNAPSHOT
-    dockerJava 'com.github.docker-java:docker-java:3.1.0-rc-7'
+    dockerJava 'com.aries:docker-java-shaded:3.1.0-rc-3:cglib@jar'
     dockerJava 'org.slf4j:slf4j-simple:1.7.25'
     dockerJava 'cglib:cglib:3.2.9'
 }
